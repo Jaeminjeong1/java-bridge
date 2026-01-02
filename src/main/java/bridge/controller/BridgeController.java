@@ -40,4 +40,14 @@ public class BridgeController {
         }
     }
 
+    private void startGame(List<String> bridge) {
+
+        for (int i = 0; i < bridge.size(); i++) {
+            String userMoving = InputView.readMoving();
+            String answer = bridge.get(i);
+            String result = bridgeService.isMatchAnswer(userMoving, answer);
+        }
+
+    }
+
 }
