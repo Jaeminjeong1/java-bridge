@@ -37,13 +37,13 @@ public class Validator {
     }
 
     public static void validateMovingInput(String input) {
-        if (input.equals(UP_INDEX) || input.equals(DOWN_INDEX)) {
+        if (!input.equals(UP_INDEX) && !input.equals(DOWN_INDEX)) {
             throw new IllegalArgumentException(MOVING_FORMAT_ERROR.getMessage());
         }
     }
 
     public static void validateIsRestart(String input) {
-        if (input.equals(RESTART_INDEX) || input.equals(QUIT_INDEX)) {
+        if (!input.equals(RESTART_INDEX) && !input.equals(QUIT_INDEX)) {
             throw new IllegalArgumentException(RESTART_FORMAT_ERROR.getMessage());
         }
     }
