@@ -7,6 +7,8 @@ import static bridge.util.ErrorMessage.*;
 public class Validator {
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^\\d+$");
+    private static final int MIN_BRIDGE_NUM = 3;
+    private static final int MAX_BRIDGE_NUM = 20;
     private static final String UP_INDEX = "U";
     private static final String DOWN_INDEX = "D";
     private static final String RESTART_INDEX = "R";
@@ -33,6 +35,13 @@ public class Validator {
     public static void validatePositive(int value) {
         if (value <= 0) {
             throw new IllegalArgumentException(INPUT_ERROR.getMessage());
+        }
+    }
+
+    // 값 범위 검증
+    public static void validateRange(int value) {
+        if (value < MIN_BRIDGE_NUM || value > MAX_BRIDGE_NUM) {
+            throw new IllegalArgumentException(BRIDGE_LENGTH_ERROR.getMessage());
         }
     }
 

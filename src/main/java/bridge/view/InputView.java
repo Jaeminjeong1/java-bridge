@@ -27,6 +27,7 @@ public class InputView {
 
         int userInput = Integer.parseInt(input);
         Validator.validatePositive(userInput);
+        Validator.validateRange(userInput);
 
         return userInput;
     }
