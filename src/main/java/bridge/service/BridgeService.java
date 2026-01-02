@@ -21,4 +21,9 @@ public class BridgeService {
 
         return bridgeGame.move(userMoving, answer);
     }
+
+    public boolean isRetry(String command) {
+        BridgeGame bridgeGame = new BridgeGame();
+        return bridgeGame.retry(command);
+    }
 }
