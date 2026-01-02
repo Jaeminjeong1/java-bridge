@@ -1,11 +1,10 @@
 package bridge.controller;
 
+import bridge.domain.RoundState;
 import bridge.service.BridgeService;
 import bridge.view.InputView;
 import bridge.view.OutputView;
-import bridge.domain.RoundResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BridgeController {
@@ -17,34 +16,9 @@ public class BridgeController {
     }
 
     public void start() {
-        // 프로그램 시작 멘트
         OutputView.printStart();
-        // 다리 길이 입력 받기
         List<String> bridge = inputBridgeSize();
-        List<String> resultBridge = new ArrayList<>();
-        List<String> userMovings = new ArrayList<>();
-        int attempt = 1;
-        RoundResult finalResult = RoundResult.FAIL;
-
-        while (true) {
-            RoundResult result = startGame(bridge, resultBridge, userMovings);
-            finalResult = result;
-            if (result == RoundResult.CLEAR) {
-                break;
-            }
-
-            String input = InputView.readGameCommand();
-            if (bridgeService.isRetry(input)) {
-                attempt++;
-                resultBridge.clear();
-                userMovings.clear();
-                continue;
-            }
-            break;
-        }
-
-        // 최종 게임 결과 출력
-        OutputView.printResult(resultBridge, userMovings, finalResult == RoundResult.CLEAR, attempt);
+        playUntilEnd(bridge);
     }
 
     private List<String> inputBridgeSize() {
@@ -59,29 +33,59 @@ public class BridgeController {
         }
     }
 
-    private RoundResult startGame(List<String> bridge, List<String> resultBridge, List<String> userMovings) {
+    private void playUntilEnd(List<String> bridge) {
+        int attempt = 1;
+        while (true) {
+            RoundState state = playOnce(bridge);
+            OutputView.printResult(state.getMoves(), state.getResults(), state.isSuccess(), attempt);
+            if (state.isSuccess()) {
+                return;
+            }
+            if (isRetry()) {
+                attempt++;
+                continue;
+            }
+            return;
+        }
+    }
+
+    private RoundState playOnce(List<String> bridge) {
+        RoundState state = new RoundState();
+        for (String answer : bridge) {
+            if (isFailRound(answer, state)) {
+                return state;
+            }
+        }
+        state.markSuccess();
+        return state;
+    }
+
+    private boolean isFailRound(String answer, RoundState state) {
+        String userMoving = inputMoving();
+        String result = bridgeService.isMatchAnswer(userMoving, answer); // O or X
+        state.addRound(userMoving, result);
+        OutputView.printMap(state.getMoves(), state.getResults());
+        return result.equals("X");
+    }
+
+    private String inputMoving() {
         while (true) {
             try {
-                for (int i = 0; i < bridge.size(); i++) {
-                    String userMoving = InputView.readMoving();
-                    String answer = bridge.get(i);
-                    String result = bridgeService.isMatchAnswer(userMoving, answer);
-                    resultBridge.add(result);
-                    userMovings.add(userMoving);
-                    OutputView.printMap(resultBridge, userMovings);
-                    if (result.equals("X")) {
-                        return RoundResult.FAIL;
-                    }
-                    if (i == bridge.size() - 1) {
-                        return RoundResult.CLEAR;
-                    }
-                }
+                return InputView.readMoving();
             } catch (IllegalArgumentException e) {
                 OutputView.printErrorMessage(e);
             }
         }
+    }
 
-
+    private boolean isRetry() {
+        while (true) {
+            try {
+                return bridgeService.isRetry(InputView.readGameCommand());
+            } catch (IllegalArgumentException e) {
+                OutputView.printErrorMessage(e);
+            }
+        }
     }
 
 }
