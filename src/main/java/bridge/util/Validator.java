@@ -2,12 +2,15 @@ package bridge.util;
 
 import java.util.regex.Pattern;
 
-import static bridge.util.ErrorMessage.INPUT_ERROR;
-import static bridge.util.ErrorMessage.NUMBER_FORMAT_ERROR;
+import static bridge.util.ErrorMessage.*;
 
 public class Validator {
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^\\d+$");
+    private static final String UP_INDEX = "U";
+    private static final String DOWN_INDEX = "D";
+    private static final String RESTART_INDEX = "R";
+    private static final String QUIT_INDEX = "Q";
 
     private Validator() {
     }
@@ -33,10 +36,15 @@ public class Validator {
         }
     }
 
-    // 값 범위 검증
-    public static void validateRange(int value, int min, int max) {
-        if (value < min || value > max) {
-            throw new IllegalArgumentException(INPUT_ERROR.getMessage());
+    public static void validateMovingInput(String input) {
+        if (input.equals(UP_INDEX) || input.equals(DOWN_INDEX)) {
+            throw new IllegalArgumentException(MOVING_FORMAT_ERROR.getMessage());
+        }
+    }
+
+    public static void validateIsRestart(String input) {
+        if (input.equals(RESTART_INDEX) || input.equals(QUIT_INDEX)) {
+            throw new IllegalArgumentException(RESTART_FORMAT_ERROR.getMessage());
         }
     }
 }
