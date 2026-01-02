@@ -39,6 +39,7 @@ public class InputView {
         String input = Console.readLine();
 
         Validator.validateEmptyInput(input);
+        Validator.validateMovingInput(input);
         return input;
     }
 
@@ -50,6 +51,7 @@ public class InputView {
         String input = Console.readLine();
 
         Validator.validateEmptyInput(input);
+        Validator.validateIsRestart(input);
         return input;
     }
 }
